@@ -1,0 +1,36 @@
+
+/*========= Navigation ===========*/
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    background-color: aqua;
+    color: #129cf3;
+}
+
+/*========= About Me ==============*/
+#about {
+    padding-top: 100px;
+}
+
+.contact-row {
+    padding-top: 40px;
+}
+
+/*========= Front Page ==============*/
+.links-row {
+    margin-top: 50px;
+}
+
+.link-btn-lg {
+    padding: 18px 28px;
+    font-size: 22px;
+    line-height: normal;
+    -webkit-border-radius: 8px;
+       -moz-border-radius: 8px;
+            border-radius: 8px;
+}
+
+/*========= Projects and Demos =======*/
+.card {
+    margin-top: 10px;
+}
