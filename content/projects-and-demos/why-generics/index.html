@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Why Bounded Generics</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style.css">
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
+
+        <script type="text/javascript" async
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <body>
+        <!-- Header -->
+        <div class="header-wrapper">
+        </div>
+
+        <!-- Project Content -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h1>Why Bounded Generics</h1>
+                    <h3>Introduction</h3>
+                    <p>
+                        This may be an elementary topic. But every so often, I find myself brooding over why Java has bounded Generics.
+                        In particular, why does <code>MyClass&lt;T extends AnotherClass&gt;</code> need to exist? Why not just <code>MyClass&lt;AnotherClass&gt;</code>?
+                        I've decided to create a post that I can refer to, instead of spending time re-rationalizing this concept in my head.
+                    </p>
+                    <p>
+                        The two main benefits of bounded generics that come to mind are
+                        <ul>
+                          <li>Maintaining Flexibility while Enforcing Internal Requirements</li>
+                          <li>A <code>List&lt;Integer&gt;</code> does <i>not</i> extend <code>List&lt;Number&gt;</code></li>
+                        </ul>
+                    </p>
+
+                    <h3> Maintaining Flexibility while Enforcing Internal Requirements </h3>
+                    <h4> External Usage of a Generic Type </h4>
+                    <p>
+                      Generic types exist for the sake of the <i>user</i> of a class.
+                      With it, users can flexibly make use of <code>Collection&lt;Integer&gt;</code> or <code>Collection&lt;MyClass&gt;</code>,
+                      without having to create their own <code>IntegerCollection</code> or <code>MyClassCollection</code> classes.
+                    </p>
+                    <p>
+                      Then, the user can make assumptions about the generic class.
+                      They can do something like
+                      <pre>
+                      <code>
+                        Collection&lt;MyClass&gt; myClassInstances = initMyCollection();
+                        for (MyClass elem : myClassInstances) {
+                          elem.myMethod()
+                        }
+                      </code>
+                      </pre>
+                      instead of
+                      <pre>
+                      <code>
+                        Collection myClassInstances = initMyCollection();
+                        for (Object elem : myclassInstances) {
+                          if (elem instanceof MyClass) {
+                            ((MyClass) elem).myMethod();
+                          }
+                        }
+                      </code>
+                      </pre>
+                    </p>
+                    <h4> Internal Requirements for the Generic Type </h4>
+                    <p>
+                      But sometimes, the generic class itself needs to make use of some property of its parametrized type.
+                      For example,
+                      <pre>
+                      <code>
+                        public class NaturalNumber&lt;T extends Integer&gt; {
+                          private T n;
+
+                          public NaturalNumber(T n) { this.n = n; }
+
+                          public boolean isEven() {
+                            return n.intValue() %2 == 0;
+                          }
+                        }
+                      </code>
+                      </pre>
+
+                      Here, the internal requirements for the class is that the parametrized type of the class implements the <code>intValue</code> method; in other words,
+                      the parametrized type must extend the <code>Integer</code> class.
+                    </p>
+
+                    <p>
+                      From the above, we can see that Java's Generic type overhead allows for a class's internal implementation to make assumptions
+                      about the type parameter, while still providing a flexible template for external users of the class.
+                    </p>
+
+                    <h3>A <code>List&lt;Integer&gt;</code> does <i>not</i> extend <code>List&lt;Number&gt;</code></h3>
+                    <p>
+                      Consider the following, very similar, methods.
+                      <pre>
+                      <code>
+                        void processNumbers(List&lt;Number&gt; numbers) {...}
+
+                        void &lt;T extends Number&gt; processNumbers(List&lt;T&gt; numbers) {...}
+                      </code>
+                    </pre>
+
+                      The first method can <i>not</i> be passed an instance of List<Integer>. While an Integer extends Number, <code>List&lt;Integer&gt;</code> does
+                      <i>not</i> extend <code>List&lt;Number&gt;</code>.
+                      The second method <i>can</i> be passed an instance of <code>List&lt;Integer&gt;</code>, <code>List&lt;Double&gt;</code>, or etc. This is because the second
+                      method is asserting that each member of the <code>List</code> is a <code>Number</code>.
+                    </p>
+
+                    <h3>Conclusion</h3>
+                    <p>
+                      The biggest reason for Java's generic type overhead is to allow the internal implementation of a Generic class to make certain assumptions about
+                      the type parameter, while still allowing the user to use these classes as a flexible template. This also applies to methods with paramtrized types.
+                      Another use-case is to allow methods to accurately constrain its parameters based on the type paramter of its argument.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JavaScript -->
+        <script src="/js/jquery.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+
+        <!-- Custom JavaScript -->
+        <script src="/js/custom.js"></script>
+    </body>
+</html>
